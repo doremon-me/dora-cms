@@ -1,8 +1,10 @@
 import { Outlet } from "react-router-dom";
+import Header from "@/components/const/header";
 
-const ProjectsLayout = () => {
+const ManageLayout = () => {
   return (
     <div className="container mx-auto">
+      <Header />
       <main className="px-4 mb-10 ">
         <Outlet />
       </main>
@@ -10,4 +12,4 @@ const ProjectsLayout = () => {
   );
 };
 
-export default ProjectsLayout;
+export default ManageLayout;

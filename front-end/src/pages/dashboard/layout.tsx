@@ -1,12 +1,16 @@
-import { Outlet } from "react-router-dom";
+import DashboardSidebar from "@/components/const/sidebar";
+import { Outlet, useParams } from "react-router-dom";
+import { useGetDashboardLayout } from "./api";
 
 const DashboardLayout = () => {
+  const params = useParams<{ projectId: string }>();
+  const { data: layout } = useGetDashboardLayout(params.projectId || "");
   return (
-    <div className="flex flex-col h-screen">
-      <main className="flex-1">
+    <DashboardSidebar>
+      <main>
         <Outlet />
       </main>
-    </div>
+    </DashboardSidebar>
   );
 };
 

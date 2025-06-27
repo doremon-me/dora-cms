@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { formatRelativeTime } from "@/lib/formate";
 import Icon from "@/lib/icons";
+import { useNavigate } from "react-router-dom";
 
 export interface ProjectCardProps {
   id: string;
@@ -21,8 +22,14 @@ export interface ProjectCardProps {
 }
 
 export const ProjectCard = (project: ProjectCardProps) => {
+  const navigate = useNavigate();
   return (
-    <Card className="group relative hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer hover:outline-1">
+    <Card
+      onClick={() => {
+        navigate(`/dashboard/${project.id}`, { replace: true });
+      }}
+      className="group relative hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer hover:outline-1"
+    >
       {/* Status indicator */}
       <div className="absolute top-4 right-4 z-10">
         <div

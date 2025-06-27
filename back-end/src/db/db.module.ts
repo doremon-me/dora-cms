@@ -1,11 +1,12 @@
 import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import { ConfigService } from "@nestjs/config";
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { Pool } from "pg";
-
-const schema = {};
+import * as schema from "./schemas"
 
 export const DRIZZLE = Symbol("db_connection");
+
+@Global()
 @Module({
     providers: [
         {
@@ -16,7 +17,7 @@ export const DRIZZLE = Symbol("db_connection");
                 const pool = new Pool({
                     connectionString: dbUrl,
                     ssl: false,
-                    max: 20,
+                    max: 2,
                     idleTimeoutMillis: 3000,
                     connectionTimeoutMillis: 2000
                 });

@@ -1,21 +1,37 @@
 import NotFound from "@/components/shared/404";
-import { OAuthGoogle } from "@/pages/auth/oauth";
-import Signin from "@/pages/auth/signin";
-import Projects from "@/pages/projects";
-import ProjectsLayout from "@/pages/projects/layout";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import ProtectedRoute from "./protected.route";
-import { useUser } from "@/hooks/useUser";
+import { useUser, useUserDetails } from "@/hooks/useUser";
 import Loader from "@/components/shared/loader";
-import CreateProject from "@/pages/projects/create";
+import { AuthRoutes } from "./auth.routes";
+import { ManageRoutes } from "./manage.routes";
+import { DashboardRoutes } from "./dashboard.routes";
 
 const AppRoutes = () => {
   const navigate = useNavigate();
-  const { data: user, isLoading } = useUser();
+  const { data: user, isLoading: fetchingUser } = useUser();
+  const {
+    data: userDetails,
+    isLoading: fetchingDetails,
+    isFetched: isFetchedDetails,
+    isError,
+  } = useUserDetails(user?.id);
 
-  if (isLoading) {
+  if (fetchingUser || fetchingDetails) {
     return (
       <Loader animation="dots" showTrustBadge size="md" variant="fullscreen" />
+    );
+  }
+
+  if (isError && user) {
+    return (
+      <NotFound
+        icon="AlertTriangle"
+        message="You do not have app access"
+        title="Unauthorized"
+        variant="fullscreen"
+        size="md"
+        showBackButton={false}
+      />
     );
   }
 
@@ -23,47 +39,11 @@ const AppRoutes = () => {
     <Routes>
       <Route
         path="/"
-        element={<Navigate to={user ? "/projects" : "/auth"} replace />}
+        element={<Navigate to={user ? "/manage" : "/auth"} replace />}
       />
-      <Route path="/auth">
-        <Route index element={<Navigate to="signin" replace />} />
-        <Route
-          path="signin"
-          element={
-            <ProtectedRoute
-              type="UNAUTHENTICATED"
-              isAuthenticated={user !== undefined && user !== null}
-            >
-              <Signin />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="google"
-          element={
-            <ProtectedRoute
-              type="UNAUTHENTICATED"
-              isAuthenticated={user !== undefined && user !== null}
-            >
-              <OAuthGoogle />
-            </ProtectedRoute>
-          }
-        />
-      </Route>
-      <Route
-        path="/projects"
-        element={
-          <ProtectedRoute
-            type="AUTHENTICATED"
-            isAuthenticated={user !== undefined && user !== null}
-          >
-            <ProjectsLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Projects />} />
-        <Route path="create" element={<CreateProject />} />
-      </Route>
+      {AuthRoutes(user !== undefined && user !== null)}
+      {ManageRoutes(user !== undefined && user !== null)}
+      {DashboardRoutes(user !== undefined && user !== null)}
       <Route
         path="*"
         element={

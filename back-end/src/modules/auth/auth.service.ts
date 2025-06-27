@@ -4,12 +4,11 @@ import { UsersService } from '@/modules/users/users.service';
 import * as OAuthKeys from "@configurations/oauth.keys.json"
 import { compare } from 'bcrypt';
 import { SelectUser } from '@/db/schemas/users.schema';
-import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly userService: UsersService, private readonly jwtService: JwtService) { }
+    constructor(private readonly userService: UsersService) { }
     async singin(singin: SigninDto): Promise<SelectUser> {
         const user = await this.userService.getUser({ email: singin.email });
         if (!user) {

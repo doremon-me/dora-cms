@@ -3,9 +3,12 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export default defineConfig({
-    schema: "./src/db/schemas/*.ts",
+    schema: "./src/db/schemas/index.ts",    
     dialect: "postgresql",
     dbCredentials: {
         url: process.env.DATABASE_URL
-    }
+    },
+    verbose: true,
+    strict: true,
+    out: './src/db/migrations'
 })

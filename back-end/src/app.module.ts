@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from "@nestjs/config"
 import { JwtModule } from '@nestjs/jwt';
-
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProjectsModule } from './modules/projects/projects.module';
+import { LayoutsModule } from './modules/layouts/layouts.module';
+import { RolesModule } from './modules/roles/roles.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -28,7 +29,7 @@ import { ProjectsModule } from './modules/projects/projects.module';
         limit: 10
       }
     ]
-  }), AuthModule, ProjectsModule],
+  }), AuthModule, ProjectsModule, ConfigModule, LayoutsModule, RolesModule],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard }
   ]

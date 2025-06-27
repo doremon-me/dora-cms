@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, pgEnum, pgTable, pgView, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgEnum, pgTable, pgView, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const TypesEnum = pgEnum("types_enum", [
     "ECOMMERCE",
@@ -15,16 +15,12 @@ export const publicProjectsView = pgView("public_projects_view", {
     description: text("description"),
     type: text("type"),
     origin: text("origin"),
-    createdAt: timestamp("created_at"),
-    updatedAt: timestamp("updated_at"),
 }).as(sql`  
         SELECT id, 
         name, 
         description, 
         type, 
-        origin, 
-        created_at, 
-        updated_at 
+        origin
         FROM projects 
         WHERE is_deleted = false
     `);
@@ -41,10 +37,6 @@ export const projects = pgTable("projects", {
     // Soft Delete
     isDeleted: boolean("is_deleted").default(false),
     deletedAt: timestamp("deleted_at"),
-
-    // Timestamps
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at"),
 });
 
 export type SelectProject = typeof projects.$inferSelect;

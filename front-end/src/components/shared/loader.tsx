@@ -31,20 +31,23 @@ const Loader: React.FC<LoaderProps> = ({
     switch (animation) {
       case "spin":
         return (
-          <Loader2 
-            className={cn("animate-spin", `w-${sizes.icon/4} h-${sizes.icon/4}`)}
+          <Loader2
+            className={cn(
+              "animate-spin",
+              `w-${sizes.icon / 4} h-${sizes.icon / 4}`
+            )}
             style={{ width: sizes.icon, height: sizes.icon }}
           />
         );
-      
+
       case "pulse":
         return (
-          <div 
+          <div
             className="bg-primary rounded-full animate-pulse"
             style={{ width: sizes.icon, height: sizes.icon }}
           />
         );
-      
+
       case "bounce":
         return (
           <div className="flex space-x-1">
@@ -53,18 +56,21 @@ const Loader: React.FC<LoaderProps> = ({
                 key={i}
                 className={cn(
                   "bg-primary rounded-full animate-bounce",
-                  `w-${Math.max(2, sizes.icon/8)} h-${Math.max(2, sizes.icon/8)}`
+                  `w-${Math.max(2, sizes.icon / 8)} h-${Math.max(
+                    2,
+                    sizes.icon / 8
+                  )}`
                 )}
-                style={{ 
-                  width: Math.max(8, sizes.icon/3), 
-                  height: Math.max(8, sizes.icon/3),
-                  animationDelay: `${i * 0.1}s` 
+                style={{
+                  width: Math.max(8, sizes.icon / 3),
+                  height: Math.max(8, sizes.icon / 3),
+                  animationDelay: `${i * 0.1}s`,
                 }}
               />
             ))}
           </div>
         );
-      
+
       case "dots":
         return (
           <div className="flex space-x-1">
@@ -77,10 +83,10 @@ const Loader: React.FC<LoaderProps> = ({
             ))}
           </div>
         );
-      
+
       default:
         return (
-          <Loader2 
+          <Loader2
             className="animate-spin text-primary"
             style={{ width: sizes.icon, height: sizes.icon }}
           />
@@ -92,11 +98,7 @@ const Loader: React.FC<LoaderProps> = ({
     return (
       <div className={cn("flex items-center gap-3", className)}>
         <LoadingAnimation />
-        {message && (
-          <span className={cn("text-muted-foreground", sizes.text)}>
-            {message}
-          </span>
-        )}
+        {message && <span className={cn(sizes.text)}>{message}</span>}
       </div>
     );
   }
@@ -105,7 +107,7 @@ const Loader: React.FC<LoaderProps> = ({
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="flex flex-col items-center gap-6 text-center">
         <LoadingAnimation />
-        
+
         {message && (
           <p className={cn("text-muted-foreground max-w-sm", sizes.text)}>
             {message}

@@ -1,13 +1,9 @@
-import { boolean, pgEnum, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core"
-
-export const roleEnum = pgEnum("roles", [
-    "SUPER_ADMIN",
-    "ADMIN",
-    "USER"
-]);
+import { boolean, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core"
+import { roles } from "./roles.schema";
+import { relations } from "drizzle-orm";
 
 export const users = pgTable('users', {
-    id: serial('id').primaryKey(),
+    id: uuid('id').primaryKey().defaultRandom(),
 
     // Basic user information
     firstName: text("first_name").notNull(),
@@ -16,17 +12,35 @@ export const users = pgTable('users', {
 
     // Authentication details
     password: varchar('password').notNull(),
-    role: roleEnum("role").default("USER"),
     isActive: boolean('is_active').default(true),
 
     // Soft Delete
     isDeleted: boolean("is_deleted").default(false),
     deletedAt: timestamp("deleted_at"),
-
-    // Time stamp
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const userRoles = pgTable('user_roles', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    roleId: uuid('role_id').notNull().references(() => roles.id, { onDelete: 'cascade' }),
+});
+
+export const usersRelations = relations(users, ({ many }) => ({
+    userRoles: many(userRoles)
+}));
+
+export const userRolesRelations = relations(userRoles, ({ one }) => ({
+    user: one(users, {
+        fields: [userRoles.userId],
+        references: [users.id],
+    }),
+    roles: one(roles, {
+        fields: [userRoles.roleId],
+        references: [roles.id],
+    })
+}))
 
 export type SelectUser = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+export type SelectUserRole = typeof userRoles.$inferSelect;
+export type InsertUserRole = typeof userRoles.$inferInsert;

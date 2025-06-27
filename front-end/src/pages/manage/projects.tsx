@@ -2,17 +2,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
 import Icon from "@/lib/icons";
-import { Link } from "react-router-dom";
-import { useLogout } from "../auth/api";
-import { ConfirmDialog } from "@/components/shared/confirm";
 import { useGetProjects } from "./api";
-import { Pages } from "@/components/shared/Pages";
+import { Pages } from "@/components/shared/pages";
 import {
   ProjectCard,
   ProjectCardSkeleton,
   type ProjectCardProps,
 } from "./components/project.card";
 import { useDebounce } from "@/hooks/useDebounce";
+import AddProject from "./components/add.project";
 
 const Projects = () => {
   const [searchParams, setSearchParams] = useState<{
@@ -29,7 +27,6 @@ const Projects = () => {
     page: 1,
   });
   const [searchValue, setSearchValue] = useState("");
-  const { mutate: logout } = useLogout();
   const { data, isLoading, isError } = useGetProjects(searchParams);
 
   const performSearch = (searchTerm: string) => {
@@ -40,7 +37,7 @@ const Projects = () => {
     }));
   };
 
-  const debouncedSearch = useMemo(() => useDebounce(performSearch, 500), []);
+  const debouncedSearch = useMemo(() => useDebounce(performSearch, 300), []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -50,106 +47,25 @@ const Projects = () => {
 
   return (
     <div>
-      <header className="sticky z-50 top-0 bg-background/95 backdrop-blur-sm border-b transition-all duration-300 flex justify-between items-center">
-        <div className="py-3">
-          <div className="hidden lg:flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Icon name="FolderOpen" size={20} className="text-primary" />
-              <h2 className="font-semibold text-lg">Projects</h2>
-            </div>
-            <div className="flex-1 max-w-md relative">
-              <Icon
-                name="Search"
-                size={16}
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                placeholder="Search projects..."
-                className="w-full pl-10 pr-10"
-                value={searchValue}
-                onChange={handleSearchChange}
-              />
-              {searchParams.search && (
-                <button
-                  onClick={() => {
-                    setSearchValue("");
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      search: "",
-                      page: 1,
-                    }));
-                  }}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Icon name="X" size={16} />
-                </button>
-              )}
-            </div>
-            <Link to="create" className="flex items-center">
-              <Button variant="secondary">
-                <Icon name="Plus" size={16} className="mr-2" />
-                Add Project
-              </Button>
-            </Link>
+      <div className="flex gap-5 items-center justify-center pt-5">
+        <div className="w-full max-w-[400px] flex items-center justify-center">
+          <div className="flex items-center justify-center w-10 h-9 bg-muted rounded-l-md border-[1px] p-2.5">
+            <Icon name="Search" />
           </div>
-
-          <div className="lg:hidden space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Icon name="FolderOpen" size={18} className="text-primary" />
-                <h2 className="font-semibold text-base sm:text-lg">Projects</h2>
-              </div>
-              <Link to="create" className="flex items-center">
-                <Button variant="secondary">
-                  <Icon name="Plus" size={16} className="mr-2" />
-                  Add Project
-                </Button>
-              </Link>
-            </div>
-
-            <div className="relative">
-              <Icon
-                name="Search"
-                size={16}
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                placeholder="Search projects..."
-                className="w-full pl-10 pr-10"
-                value={searchValue}
-                onChange={handleSearchChange}
-              />
-              {searchParams.search && (
-                <button
-                  onClick={() => {
-                    setSearchValue("");
-                    setSearchParams((prev) => ({
-                      ...prev,
-                      search: "",
-                      page: 1,
-                    }));
-                  }}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Icon name="X" size={16} />
-                </button>
-              )}
-            </div>
-          </div>
+          <Input
+            placeholder="Search projects..."
+            className="w-full rounded-l-none border-l-0"
+            value={searchValue}
+            onChange={handleSearchChange}
+          />
         </div>
-        <ConfirmDialog
-          cancelText="Cancel"
-          confirmText="Logout"
-          title="Logout"
-          description="Are you sure you want to logout?"
-          onConfirm={logout}
-          variant="warning"
-        >
-          <Button>Logout</Button>
-        </ConfirmDialog>
-      </header>
-
-      <br />
+        <AddProject>
+          <Button variant="secondary">
+            <Icon name="Plus" size={16} className="mr-2" />
+            Add Project
+          </Button>
+        </AddProject>
+      </div>
 
       {(searchValue || searchParams.search) && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
@@ -273,12 +189,11 @@ const Projects = () => {
         currentPage={searchParams.page}
         itemsPerPage={searchParams.limit}
         totalItems={data?.total || 0}
-        onPageChange={() => {
+        onPageChange={(page: number) => {
           setSearchParams((prev) => {
-            const newPage = prev.page + 1;
             return {
               ...prev,
-              page: newPage > Math.ceil(data.total / prev.limit) ? 1 : newPage,
+              page: page,
             };
           });
         }}

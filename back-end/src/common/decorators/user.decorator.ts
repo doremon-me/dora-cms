@@ -4,7 +4,7 @@ export type User = {
     role: string;
     email: string;
     id: string;
-    firstname: string;
+    firstName: string;
     lastName: string;
 } | undefined;
 

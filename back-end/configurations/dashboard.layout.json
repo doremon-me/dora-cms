@@ -1,0 +1,29 @@
+{
+  "dashboard": [
+    {
+      "name": "Home",
+      "icon": "home",
+      "path": "/"
+    },
+    {
+      "name": "Users",
+      "icon": "users",
+      "path": "/users"
+    },
+    {
+      "name": "Collections",
+      "icon": "collections",
+      "path": "/collections"
+    },
+    {
+      "name": "Assets",
+      "icon": "assets",
+      "path": "/assets"
+    },
+    {
+      "name": "Settings",
+      "icon": "settings",
+      "path": "/settings"
+    }
+  ]
+}

@@ -1,7 +1,5 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { UsersService } from './modules/users/users.service';
-import { bootstrapSuperAdmin } from './utils/bootstrap.superadmin';
 import { ClassSerializerInterceptor, ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
@@ -24,9 +22,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.set("trust proxy", "loopback");
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-
-  const userService = app.get(UsersService);
-  await bootstrapSuperAdmin(userService);
 
   await app.listen(process.env.PORT ?? 3000);
 }

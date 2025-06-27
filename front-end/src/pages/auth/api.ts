@@ -36,7 +36,7 @@ export const useSigninWithEmail = (setError: UseFormSetError<SigninSchema>) => {
         onSuccess: (data: User) => {
             queryClient.setQueryData(["user"], data);
             toast.success("Logged in successfully.");
-            navigate("/projects", { replace: true });
+            navigate("/manage/projects", { replace: true });
         },
         onError: (error: AxiosError) => {
             if (error.status === 404) {
